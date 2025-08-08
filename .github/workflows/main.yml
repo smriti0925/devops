@@ -1,6 +1,7 @@
 name: Deploy index.html to EC2
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main  # adjust based on your branch
