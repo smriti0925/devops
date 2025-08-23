@@ -1,0 +1,37 @@
+step "run-a-script" {
+    name = "Run a Script"
+    properties = {
+        Octopus.Action.TargetRoles = "1"
+    }
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.RunOnServer = "false"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                #!/bin/bash
+                # Define the repository URL and target directory
+                REPO_URL="https://github.com/smriti0925/devops.git"
+                TARGET_DIR="/tmp"  # Target directory on the EC2 instance
+                
+                # Clone the GitHub repository to a temporary directory
+                git clone $REPO_URL /tmp/repo
+                
+                # Copy the index.php to the target directory (/tmp)
+                cp /tmp/repo/index.php $TARGET_DIR/
+                
+                # Set proper permissions (if needed)
+                chmod 644 $TARGET_DIR/index.php
+                
+                # Clean up the temporary directory
+                rm -rf /tmp/repo
+                
+                echo "Deployment of index.php to /tmp completed successfully!"
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "Bash"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
